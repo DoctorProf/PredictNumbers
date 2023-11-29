@@ -59,4 +59,8 @@
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
   </ItemGroup>
+  <ItemGroup>
+    <Text Include="inputSet.txt" />
+    <Text Include="Weights.txt" />
+  </ItemGroup>
 </Project>

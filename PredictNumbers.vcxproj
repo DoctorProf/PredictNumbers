@@ -161,6 +161,10 @@
     <ClInclude Include="Headers\NeuralNetwork.h" />
     <ClInclude Include="Headers\Neuron.h" />
   </ItemGroup>
+  <ItemGroup>
+    <Text Include="inputSet.txt" />
+    <Text Include="Weights.txt" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
     <Import Project="packages\boost.1.83.0\build\boost.targets" Condition="Exists('packages\boost.1.83.0\build\boost.targets')" />
