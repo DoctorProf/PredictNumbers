@@ -46,8 +46,8 @@ int main()
     buttons.push_back(Button(20.0f, 20.0f, 100, 30, L"", font));
     buttons.push_back(Button(20.0f, 70.0f, 100, 30, L"Обучение", font));
     buttons.push_back(Button(20.0f, 120.0f, 100, 30, L"Очистить", font));
-    buttons.push_back(Button(20.0f, 170.0f, 100, 30, L"Сохранить сет", font));
-    buttons.push_back(Button(20.0f, 220.0f, 100, 30, L"Очистить сет", font));
+    buttons.push_back(Button(20.0f, 170.0f, 100, 30, L"Сохранить сеты", font));
+    buttons.push_back(Button(20.0f, 220.0f, 100, 30, L"Очистить сеты", font));
     std::vector<Button> buttonsNum;
     for (int i = 0; i < 10; i++) 
     {
@@ -117,6 +117,7 @@ int main()
                     {
                         if (i == 1) 
                         {
+                            window.setTitle(L"...ОБУЧЕНИЕ...");
                             window.setTitle(L"Predict");
                             nn.trainToIterarion(inputSet, outputSet, 30, true);
                             window.setTitle(L"ОБУЧЕНИЕ ОКОНЧЕНО");
@@ -207,19 +208,19 @@ int main()
                     cells[coordsVector.y][coordsVector.x].setColor(1);
                     if (bounds(coordsVector.x + 1))
                     {
-                        cells[coordsVector.y][coordsVector.x + 1].setColor(cells[coordsVector.y][coordsVector.x + 1].getColor() + 0.2);
+                        cells[coordsVector.y][coordsVector.x + 1].setColor(cells[coordsVector.y][coordsVector.x + 1].getColor() + 1);
                     }
                     if (bounds(coordsVector.x - 1))
                     {
-                        cells[coordsVector.y][coordsVector.x - 1].setColor(cells[coordsVector.y][coordsVector.x - 1].getColor() + 0.2);
+                        cells[coordsVector.y][coordsVector.x - 1].setColor(cells[coordsVector.y][coordsVector.x - 1].getColor() + 1);
                     }
                     if (bounds(coordsVector.y + 1))
                     {
-                        cells[coordsVector.y + 1][coordsVector.x].setColor(cells[coordsVector.y + 1][coordsVector.x].getColor() + 0.2);
+                        cells[coordsVector.y + 1][coordsVector.x].setColor(cells[coordsVector.y + 1][coordsVector.x].getColor() + 1);
                     }
                     if (bounds(coordsVector.y - 1))
                     {
-                        cells[coordsVector.y - 1][coordsVector.x].setColor(cells[coordsVector.y - 1][coordsVector.x].getColor() + 0.2);
+                        cells[coordsVector.y - 1][coordsVector.x].setColor(cells[coordsVector.y - 1][coordsVector.x].getColor() + 1);
                     }
                 }
                 std::vector<double> set;
