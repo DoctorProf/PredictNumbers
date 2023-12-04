@@ -20,7 +20,6 @@ int main()
     std::vector<std::vector<double>> inputSet;
     std::vector<std::vector<double>> outputSet;
     NeuralNetwork nn(784, { 10, 10 }, 10, 1, 0.6, true);
-    //NeuralNetwork nn("Weights.txt");
     RenderWindow window(VideoMode(400, 570), "Predict", sf::Style::Close);
     window.setVerticalSyncEnabled(true);
     Font font;
@@ -53,12 +52,6 @@ int main()
     {
         buttonsNum.push_back(Button(320.0f, 150 + 40.0f * i, 30, 30, std::to_wstring(i), font));
     }
-    Clock clock;
-    Clock clock2;
-    Time accumulatedTime = Time::Zero;
-    Time accumulatedTime2 = Time::Zero;
-    Time timePerFrame = seconds(1.0f / 60); // tps
-    Time timePerFrame2 = seconds(1.0f / 60); // fps
     bool isDrawing = false;
     std::vector<std::string> lines;
     std::string line;
@@ -119,7 +112,7 @@ int main()
                         {
                             window.setTitle(L"...ОБУЧЕНИЕ...");
                             window.setTitle(L"Predict");
-                            nn.trainToIterarion(inputSet, outputSet, 30, true);
+                            nn.trainToIterarion(inputSet, outputSet, 30);
                             window.setTitle(L"ОБУЧЕНИЕ ОКОНЧЕНО");
                         }
                         else if (i == 2)
@@ -231,7 +224,7 @@ int main()
                         set.push_back(cells[j][k].getColor());
                     }
                 }
-                nn.predict(set);
+                nn.forwardFeed(set);
                 std::vector<Neuron> lastLayers = nn.getLayers()[nn.getLayers().size() - 1];
                 std::vector<double> values;
                 for (int j = 0; j < lastLayers.size(); j++)
@@ -247,35 +240,25 @@ int main()
                 number.setString(std::to_string(num) + " " + std::to_string((lastLayers[num].getValue() / sum) * 100) + " %");
             }
         }
-        accumulatedTime += clock.restart();
-        while (accumulatedTime >= timePerFrame)
+        buttons[0].setText(L"Кол-во сетов: " + std::to_wstring(inputSet.size()));
+        window.clear(Color::Black);
+        for (int i = 0; i < cells.size(); i++) 
         {
-            buttons[0].setText(L"Кол-во сетов: " + std::to_wstring(inputSet.size()));
-            accumulatedTime -= timePerFrame;
+            for (int j = 0; j < cells[i].size(); j++) 
+            {
+                cells[i][j].draw(window);
+            }
         }
-        accumulatedTime2 += clock2.restart();
-        if (accumulatedTime2 >= timePerFrame2)
+        for (int i = 0; i < buttons.size(); i++) 
         {
-            accumulatedTime2 -= timePerFrame2;
-            window.clear(Color::Black);
-            for (int i = 0; i < cells.size(); i++) 
-            {
-                for (int j = 0; j < cells[i].size(); j++) 
-                {
-                    cells[i][j].draw(window);
-                }
-            }
-            for (int i = 0; i < buttons.size(); i++) 
-            {
-                buttons[i].draw(window);
-            }
-            for (int i = 0; i < buttonsNum.size(); i++)
-            {
-                buttonsNum[i].draw(window);
-            }
-            window.draw(predict);
-            window.draw(number);
-            window.display();
+            buttons[i].draw(window);
         }
+        for (int i = 0; i < buttonsNum.size(); i++)
+        {
+            buttonsNum[i].draw(window);
+        }
+        window.draw(predict);
+        window.draw(number);
+        window.display();
     }
 }

@@ -3,12 +3,10 @@
 double NeuralNetwork::activate(double x)
 {
 	return 1.0 / (1.0 + exp(-x));
-	//return x > 0 ? x : 0.0;
 }
 double NeuralNetwork::derivative(double x)
 {
 	return x * (1 - x);
-	//return x < 0 ? 0.0 : 1.0;
 }
 void NeuralNetwork::generateNeurons()
 {
@@ -45,7 +43,7 @@ void NeuralNetwork::generateNeurons()
 }
 
 
-void NeuralNetwork::forwardPropagation(std::vector<double> inputs)
+void NeuralNetwork::forwardFeed(std::vector<double> inputs)
 {
 	// Установка входных параметров
 	for (int i = 0; i < layers[0].size() - this->useBias; i++)
@@ -74,7 +72,7 @@ void NeuralNetwork::forwardPropagation(std::vector<double> inputs)
 
 void NeuralNetwork::backPropagation(std::vector<double> inputs, std::vector<double> value)
 {
-	forwardPropagation(inputs);
+	forwardFeed(inputs);
 	// Рассчет ошибки и градиента выходных нейронов
 	for (int i = 0; i < layers[layers.size() - 1].size(); i++)
 	{
@@ -124,37 +122,6 @@ void NeuralNetwork::initializeWeights()
 		}
 	}
 }
-double NeuralNetwork::getErrorSquare(int index)
-{
-	if (outputNeurons == 0) return 0;
-	return pow(layers[layers.size() - 1][index].getError(), 2);
-}
-void NeuralNetwork::saveNN()
-{
-	std::ofstream file("Weights.txt");
-	file << useBias << std::endl;
-	file << momentNes << std::endl;
-	file << learningRate << std::endl;
-	file << inputNeurons << std::endl;
-	file << hideNeurons.size() << std::endl;
-	for (int i = 0; i < hideNeurons.size(); i++) 
-	{
-		file << hideNeurons[i] << std::endl;
-	}
-	file << outputNeurons << std::endl;
-	for (int i = 0; i < layers.size(); i++)
-	{
-		for (int j = 0; j < layers[i].size(); j++)
-		{
-			for (int k = 0; k < layers[i][j].getWeights().size(); k++)
-			{
-				file << layers[i][j].getWeights()[k] << std::endl;
-			}
-		}
-	}
-	file.close();
-	std::cout << "save\n";
-}
 NeuralNetwork::NeuralNetwork(int inputNeurons, std::vector<int> hideNeurons, int outputNeurons, double learningRate, double momentNes, bool useBias)
 {
 	this->inputNeurons = inputNeurons;
@@ -168,52 +135,12 @@ NeuralNetwork::NeuralNetwork(int inputNeurons, std::vector<int> hideNeurons, int
 	generateNeurons();
 	initializeWeights();
 }
-NeuralNetwork::NeuralNetwork(std::string file)
-{
-	std::ifstream inputFile(file);
-	std::vector<std::string> lines;
-	std::string line;
-	while (std::getline(inputFile, line)) 
-	{
-		lines.push_back(line);
-	}
-	this->useBias = std::stoi(lines[0]);
-	this->momentNes = std::stod(lines[1]);
-	this->learningRate = std::stod(lines[2]);
-	this->inputNeurons = std::stoi(lines[3]);
-	for (int i = 0; i < std::stoi(lines[4]); i++)
-	{
-		hideNeurons.push_back(std::stoi(lines[5 + i]));
-	}
-	this->outputNeurons = std::stoi(lines[std::stoi(lines[4]) + 5]);
-	generateNeurons();
-	for (int i = 0; i < layers.size() - 1; i++) 
-	{
-		for (int j = 0; j < layers[i].size(); j++) 
-		{
-			for (int k = 0; k < layers[i + 1].size(); k++) 
-			{
-				int index = 0;
-				if (i == 0) 
-				{
-					index = hideNeurons.size() + 6 + k + j * layers[i][0].getWeights().size();
-				}
-				else 
-				{
-					index = hideNeurons.size() + 6 + k + j * layers[i][0].getWeights().size() + i * layers[i - 1].size() * layers[i - 1][0].getWeights().size();
-				}
-				layers[i][j].setWeights(k, std::stod(lines[index]));
-			}
-		}
-	}
-	
-}
 std::vector<std::vector<Neuron>> NeuralNetwork::getLayers()
 {
 	return layers;
 }
 
-void NeuralNetwork::trainToIterarion(std::vector<std::vector<double>> inputSet, std::vector<std::vector<double>> outputSet, int iteration, bool save)
+void NeuralNetwork::trainToIterarion(std::vector<std::vector<double>> inputSet, std::vector<std::vector<double>> outputSet, int iteration)
 {
 	for (int i = 0; i < iteration; i++)
 	{
@@ -223,34 +150,6 @@ void NeuralNetwork::trainToIterarion(std::vector<std::vector<double>> inputSet, 
 		}
 		printResultTrain(inputSet, outputSet);
 	}
-	if (save) saveNN();
-}
-void NeuralNetwork::trainBeforeTheError(std::vector<std::vector<double>> inputSet, std::vector<std::vector<double>> outputSet, double errorMax, int maxIteration, bool save)
-{
-	double error = (double)INFINITY;
-	int i = 0;
-	while (error > errorMax)
-	{
-		double sum = 0;
-		std::vector<double> errors;
-		for (int j = 0; j < inputSet.size(); j++)
-		{
-			backPropagation(inputSet[j], outputSet[j]);
-			for (int k = 0; k < outputNeurons; k++)
-			{
-				sum += getErrorSquare(k);
-			}
-		}
-		error = sum / outputNeurons;
-		if (i > maxIteration)
-		{
-			std::cout << "Over iteration\n";
-			break;
-		}
-		i++;
-	}
-	std::cout << "Iteration " << i << "\n";
-	if (save) saveNN();
 }
 void NeuralNetwork::printResultTrain(std::vector<std::vector<double>> inputSet, std::vector<std::vector<double>> outputSet)
 {
@@ -259,13 +158,12 @@ void NeuralNetwork::printResultTrain(std::vector<std::vector<double>> inputSet, 
 	int count = 0;
 	for (int i = 0; i < inputSet.size(); i++)
 	{
-		forwardPropagation(inputSet[i]);
+		forwardFeed(inputSet[i]);
 		for (int j = 0; j < layers[layers.size() - 1].size(); j++)
 		{
 			if (std::round(layers[layers.size() - 1][j].getValue()) != std::round(outputSet[i][j])) 
 			{
 				count++;
-				//break;
 			}
 			std::cout << i + 1 << " NeuralNetwork: " << layers[layers.size() - 1][j].getValue() << " Waiting: " << outputSet[i][j] << "\n";
 		}
@@ -279,11 +177,6 @@ void NeuralNetwork::printResultTrain(std::vector<std::vector<double>> inputSet, 
 		
 		count = 0;
 	}
-	//std::cout << "Huinya: " << (inputSet[0] == inputSet[1]) << "\n";
 	std::cout << "not LEARN " << not_learned << "\n";
 	std::cout << "LEARN " << learned << "\n\n";
-}
-void NeuralNetwork::predict(std::vector<double> input)
-{
-	forwardPropagation(input);
 }
