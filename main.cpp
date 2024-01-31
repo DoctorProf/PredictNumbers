@@ -19,21 +19,30 @@ int main()
 {   
     std::vector<std::vector<double>> inputSet;
     std::vector<std::vector<double>> outputSet;
+
     NeuralNetwork nn(784, { 10, 10 }, 10, 1, 0.6, true);
+
     RenderWindow window(VideoMode(400, 570), "Predict", sf::Style::Close);
+
     window.setVerticalSyncEnabled(true);
+
     Font font;
     font.loadFromFile("C:/Windows/Fonts/Calibri.ttf");  
+
     Text predict;
     Text number;
+
     setStyleText(predict, font, 24);
     setStyleText(number, font, 24);
+
     predict.setPosition(Vector2f(140.0f, 20.0f));
     number.setPosition(Vector2f(260.0f, 50.0f));
     predict.setString(L"Предсказанное число: ");
     number.setString(L"0");
+
     std::vector<std::vector<Cell>> cells;
     cells.resize(28);
+
     for (int i = 0; i < 28; i++) 
     {
         for (int j = 0; j < 28; j++) 
@@ -41,17 +50,21 @@ int main()
             cells[i].push_back(Cell(20 + j * 10, 270 + i * 10));
         }
     }
+
     std::vector<Button> buttons;
     buttons.push_back(Button(20.0f, 20.0f, 100, 30, L"", font));
     buttons.push_back(Button(20.0f, 70.0f, 100, 30, L"Обучение", font));
     buttons.push_back(Button(20.0f, 120.0f, 100, 30, L"Очистить", font));
     buttons.push_back(Button(20.0f, 170.0f, 100, 30, L"Сохранить сеты", font));
     buttons.push_back(Button(20.0f, 220.0f, 100, 30, L"Очистить сеты", font));
+
     std::vector<Button> buttonsNum;
+
     for (int i = 0; i < 10; i++) 
     {
         buttonsNum.push_back(Button(320.0f, 150 + 40.0f * i, 30, 30, std::to_wstring(i), font));
     }
+
     bool isDrawing = false;
     std::vector<std::string> lines;
     std::string line;

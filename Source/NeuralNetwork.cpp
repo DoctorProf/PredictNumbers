@@ -78,7 +78,7 @@ void NeuralNetwork::backPropagation(std::vector<double> inputs, std::vector<doub
 	{
 		layers[layers.size() - 1][i].setGradient((value[i] - layers[layers.size() - 1][i].getValue()) * derivative(layers[layers.size() - 1][i].getValue()));
 	}
-	// ошибки для скрытых слоев
+	// Ошибки для скрытых слоев
 	for (int i = layers.size() - 2; i > 0; i--)
 	{
 		for (int j = 0; j < layers[i].size(); j++)
